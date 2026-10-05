@@ -622,3 +622,47 @@ document.addEventListener('pointerdown',e=>{
 </script>
 </body>
 </html>
+
+{"name":"Hydra — Água e Medicamentos","short_name":"Hydra","start_url":"./","scope":"./","display":"standalone","background_color":"#05060f","theme_color":"#05060f","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+
+
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "same-origin"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+
+[package.json](https://github.com/user-attachments/files/33080653/package.json)
+
+{"name":"hydra","private":true,"type":"module","dependencies":{"@netlify/blobs":"^8.1.0","web-push":"^3.6.7"}}
+
+
+[sw.js](https://github.com/user-attachments/files/33080664/sw.js)self.addEventListener('install',()=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
+self.addEventListener('push',e=>{
+  let d={title:'Hydra',body:''};try{d=e.data.json()}catch(_){}
+  e.waitUntil(self.registration.showNotification(d.title,{body:d.body,icon:'icon-192.png',badge:'icon-192.png',tag:'hydra-'+d.body,renotify:true}));
+});
+self.addEventListener('notificationclick',e=>{
+  e.notification.close();
+  e.waitUntil(clients.matchAll({type:'window'}).then(l=>l.length?l[0].focus():clients.openWindow('./#meds')));
+});
+
+
+
+
+
+
+
